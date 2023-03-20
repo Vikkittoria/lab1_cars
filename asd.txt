@@ -1,0 +1,124 @@
+package com.github.rsoi;
+
+import com.github.rsoi.domain.Trip;
+import com.github.rsoi.domain.Violation;
+import com.github.rsoi.domain.User;
+import com.github.rsoi.service.CarSharing;
+import com.github.rsoi.service.Searching;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
+public class Main {
+	public static void main(String[] args) {
+
+		ArrayList<User> users = new ArrayList<User>();
+
+		Scanner scanner = new Scanner(System.in);
+
+		while (true) {
+			CarSharing carSharing = new CarSharing();
+			System.out.println("0. Добавить готовых пользователей");
+			System.out.println("1. Добавить пользователя");
+			System.out.println("2. Поиск пользователей");
+			System.out.println("3. Вывести всех пользователей");
+			System.out.println("4. Выйти");
+			System.out.print("Введите номер команды: ");
+
+			int command = scanner.nextInt();
+			scanner.nextLine();
+
+			switch (command) {
+				case 0:
+					User user1 = new User("Виктор", 22, 3, Arrays.asList(new Violation("превышение", LocalDate.parse("2023-01-15"))), Arrays.asList(new Trip(15000, LocalDate.parse("2023-01-15"))));
+					users.add(user1);
+
+					User user2 = new User("Илья", 31, 12, Arrays.asList(new Violation("не пропустил пешехода", LocalDate.parse("2022-02-15"))), Arrays.asList(new Trip(2000, LocalDate.parse("2022-02-15"))));
+					users.add(user2);
+
+					User user3 = new User("Ирина", 19, 1, Arrays.asList(new Violation("проезд на красный", LocalDate.parse("2023-02-15"))), Arrays.asList(new Trip(35000, LocalDate.parse("2023-02-15"))));
+					users.add(user3);
+
+					System.out.println("Пользователи успешно добавлены.");
+					break;
+
+				case 1:
+					User user = new User();
+
+					System.out.print("Введите фио: ");
+					user.setName(scanner.nextLine());
+
+					System.out.print("Введите возраст: ");
+					user.setAge(scanner.nextInt());
+					scanner.nextLine(); // consume the leftover newline character
+
+					System.out.print("Введите опыт вождения (в цифрах): ");
+					user.setExperience(scanner.nextInt());
+					scanner.nextLine(); // consume the leftover newline character
+
+					System.out.print("Введите штрафы (разделенные запятыми, в формате 'название штрафа;дата' формат даты yyyy-mm-dd): ");
+					String check_violation = scanner.nextLine();
+					if (check_violation.contains(";")){
+						String[] violationsArray = check_violation.split(",");
+						List<Violation> violations = new ArrayList<>();
+						for (String violation : violationsArray) {
+							String[] violationData = violation.trim().split(";");
+							violations.add(new Violation(violationData[0].trim(), LocalDate.parse(violationData[1])));
+						}
+						user.setViolations(violations);
+					} else {
+						System.out.print("Введена неправильный штраф или не был введен вовсе.");
+						List<Violation> violations = new ArrayList<>();
+						user.setViolations(violations);
+					}
+
+					System.out.print("Введите поездки (разделенные запятыми, в формате 'стоимость;дата' например: 1500;2023-01-25) формат даты yyyy-mm-dd: ");
+					String check_trips = scanner.nextLine();
+					if (check_trips.contains(";")){
+						String[] tripsArray = check_trips.split(",");
+						List<Trip> trips = new ArrayList<>();
+						for (String trip : tripsArray) {
+							String[] tripData = trip.trim().split(";");
+							trips.add(new Trip(Double.parseDouble(tripData[0]), LocalDate.parse(tripData[1])));
+						}
+						user.setTrips(trips);
+					} else {
+						System.out.print("Введена неправильная поездка или не была введена вовсе.");
+						List<Trip> trips = new ArrayList<>();
+						user.setTrips(trips);
+					}
+
+					users.add(user);
+
+					System.out.println("Пользователь успешно добавлен.");
+					break;
+
+				case 2:
+					// код поиска пользователей
+					List<User> result = Searching.searchUsers(users, 2, null, null, 5000.00);
+					for (User user_info : result) {
+						System.out.println(Searching.viewUsers(user_info));
+					}
+					break;
+
+				case 3:
+					for (User user_info : users) {
+						System.out.println(Searching.viewUsers(user_info));
+					}
+					break;
+
+				case 4:
+					System.out.println("Выход из программы.");
+					System.exit(0);
+
+				default:
+					System.out.println("Некорректный ввод.");
+					break;
+			}
+		}
+	}
+
+}

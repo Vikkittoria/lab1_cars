@@ -8,11 +8,18 @@ group = 'com.github.rsoi'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
+//compileJava.options.encoding = 'UTF-8'
+//apply plugin: 'java'
+//tasks.withType(JavaCompile).configureEach {
+//    options.encoding = 'UTF-8'
+//}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
+
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
@@ -20,11 +27,14 @@ dependencies {
     testImplementation(platform('org.junit:junit-bom:5.9.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
 }
-
+run {
+    standardInput = System.in
+}
 test {
     useJUnitPlatform()
 }
 
 application {
+
     mainClassName('com.github.rsoi.Main')
 }
